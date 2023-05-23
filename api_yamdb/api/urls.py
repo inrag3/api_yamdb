@@ -9,7 +9,7 @@ router.register(r'titles', TitleViewSet)
 router.register(r'genres', GenreViewSet)
 router.register(r'categories', CategoryViewSet)
 
-app_name = 'reviews'
+app_name = 'api'
 urlpatterns = [
     path('', include(router.urls)),
 ]
