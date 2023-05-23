@@ -13,13 +13,18 @@ class Genre(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
+# class Review(models.Model):
+#     text = models.TextField()
+#     score = models.IntegerField()
+#     title = models.ForeignKey(Title, related_name='reviews' )
+
 
 class Title(models.Model):
-    category = models.ForeignKey(Category, related_name='titles', on_delete=models.SET_NULL, blank=False, null=True)
-    genre = models.ManyToManyField(Genre, related_name='titles', blank=False, null=True)
+    category = models.ForeignKey(Category, related_name='titles', blank=False, null=True, on_delete=models.SET_NULL)
+    genre = models.ManyToManyField(Genre, related_name='titles', blank=False)
     name = models.CharField(max_length=256)
     year = models.IntegerField()
-    rating = models.FloatField()
+    #rating = 
 
 
 class TitleGroup(models.Model):
