@@ -8,18 +8,30 @@ from .serializers import TitleSerializer, TitleSlugSerializer, GenreSerializer, 
 
 class TitleCreateMixin(mixins.CreateModelMixin,
                        mixins.UpdateModelMixin):
-    pass
+    def change_data(self, response):
+        category_object = Category.objects.get(slug=response.data['category'])
+        serialised_category = CategorySerializer(category_object)
+        response.data['category'] = serialised_category.data
+        genres = response.data['genre']
+        response.data['genre'] = []
+        for slug in genres:
+            genre_object = Genre.objects.get(slug=slug)
+            serialised_genre = GenreSerializer(genre_object)
+            response.data['genre'].append(serialised_genre.data)
+        return response
+
     def update(self, request, *args, **kwargs):
-        wtf = super().update(request, *args, **kwargs)
-        print(f"XXX {wtf} XXX")
-        return wtf
-        # partial = kwargs.pop('partial', False)
-        # if partial == False:
-        #     return Response        #    здесь выдать такой ответ {"detail": "Method \"PUT\" not allowed."} со статус кодом 405
-        # instance = self.get_object()      #  и дальше как
-        # serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        # serializer.is_valid(raise_exception=True)
-        # self.perform_update(serializer)
+        partial = kwargs.get('partial', None)
+        if partial is None:
+            return Response({
+                                "detail": "Method \"PUT\" not allowed."
+                            }, '405')
+        response = super().update(request, *args, **kwargs)
+        return self.change_data(response)
+    
+    def create (self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return self.change_data(response)
 
 
 class TitleViewSet(TitleCreateMixin,
@@ -30,9 +42,8 @@ class TitleViewSet(TitleCreateMixin,
     queryset = Title.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('genre__slug', 'category__slug', 'name', 'year')
-
+ 
     def get_serializer_class(self):
-        print(self.action)
         if self.action in ['partial_update', 'create']:
             return TitleSlugSerializer
         return TitleSerializer
