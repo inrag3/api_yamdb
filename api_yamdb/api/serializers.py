@@ -23,7 +23,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
-    genre = GenreSerializer(many =True)
+    genre = GenreSerializer(many=True, )
     rating = serializers.SerializerMethodField()
 
     class Meta:
@@ -33,11 +33,12 @@ class TitleSerializer(serializers.ModelSerializer):
     def validate_year(self, year):
         present_year = datetime.now().year
         if year > present_year:
-            raise serializers.ValidationError('Год выпуска фильма не может быть больше текущего года!')
+            raise serializers.ValidationError(
+                'Год выпуска фильма не может быть больше текущего года!')
         if year < 1895:
             raise serializers.ValidationError('Кино еще не появилось!')
         return year
-    
+
     def get_rating(self, obj):
         rating = obj.reviews.aggregate(score=Avg('score'))
         return rating.get('score')
@@ -45,13 +46,11 @@ class TitleSerializer(serializers.ModelSerializer):
 
 class TitleSlugSerializer(serializers.ModelSerializer):
     category = SlugRelatedField(slug_field='slug',
-                                     queryset=Category.objects.all())
-    genre = SlugRelatedField(slug_field='slug', many =True,
-                                     queryset=Genre.objects.all())
+                                queryset=Category.objects.all())
+    genre = SlugRelatedField(slug_field='slug', many=True,
+                             queryset=Genre.objects.all())
     rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Title
         fields = '__all__'
-
-    
