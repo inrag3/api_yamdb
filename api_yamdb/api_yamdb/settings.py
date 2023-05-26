@@ -53,6 +53,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'api_yamdb.wsgi.application'
 
 
@@ -103,6 +104,8 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
+
+AUTH_USER_MODEL = 'users.User'
 
 USER = 'user'
 MODERATOR = 'moderator'

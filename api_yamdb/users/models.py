@@ -30,7 +30,8 @@ class User(AbstractUser):
     )
     role = models.CharField(
         choices=ROLES,
-        default=USER
+        default=USER,
+        max_length=10,
     )
 
     def is_user(self):
