@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -101,3 +102,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+
+
+USER = 'user'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
+ROLES = (
+    (USER, 'user'),
+    (MODERATOR, 'moderator'),
+    (ADMIN, 'admin'),
+)
