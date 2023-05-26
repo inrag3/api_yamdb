@@ -26,6 +26,9 @@ class Title(models.Model):
     year = models.IntegerField()
     description = models.TextField(null=True, blank=True)
 
+    class Meta:
+        unique_together = [('name', 'year', 'category')]
+
 
 class TitleGenre(models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
