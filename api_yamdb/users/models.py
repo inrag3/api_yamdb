@@ -37,6 +37,9 @@ class User(AbstractUser):
         default=USER,
         max_length=10,
     )
+    confirmation_code = models.CharField(
+        max_length=32,
+    )
 
     def is_user(self):
         return self.role == USER

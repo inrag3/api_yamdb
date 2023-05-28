@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import User
 
 
-class UserSerializer(serializers.BaseSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
@@ -16,14 +16,21 @@ class UserSerializer(serializers.BaseSerializer):
         )
 
 
-class UserRegistrationSerializer(serializers.BaseSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ('email', 'username')
 
+    def validate_username(self, username):
+        if username == 'me':
+            raise serializers.ValidationError(
+                'Использовать имя \'me\' в качестве username запрещено!'
+            )
+        return username
 
-class TokenReceiveSerializer(serializers.BaseSerializer):
+
+class TokenReceiveSerializer(serializers.Serializer):
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+$',
         max_length=150,
