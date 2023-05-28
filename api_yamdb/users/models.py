@@ -3,6 +3,7 @@ from django.db import models
 from api_yamdb.settings import ROLES, USER, ADMIN, MODERATOR
 from django.core.validators import RegexValidator
 
+
 class User(AbstractUser):
     username = models.CharField(
         max_length=100,
@@ -19,14 +20,17 @@ class User(AbstractUser):
     )
     first_name = models.CharField(
         max_length=150,
-        blank=True
+        blank=True,
+        null=True,
     )
     last_name = models.CharField(
         max_length=150,
-        blank=True
+        blank=True,
+        null=True,
     )
     bio = models.TextField(
         blank=True,
+        null=True,
     )
     role = models.CharField(
         choices=ROLES,
