@@ -1,8 +1,15 @@
 from django.contrib import admin
 
-from .models import Title, Genre, Category, TitleGenre
-
-
+from .views import (
+    Title,
+    Genre,
+    Category,
+    TitleGenre,
+    Comment,
+    Review,
+)                     
+                     
+                     
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('pk',
                     'slug',
@@ -51,7 +58,25 @@ class TitleGenreAdmin(admin.ModelAdmin):
     def title_name(self, obj):
         return obj.title.name
 
+
+ class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'author', 'score', 'pub_date')
+    search_fields = ('title', 'author', 'text')
+    list_filter = ('pub_date', 'score', 'author')
+    empty_value_display = '-пусто-'
+
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'text', 'author', 'pub_date')
+    search_fields = ('text', 'author')
+    list_filter = ('author', 'pub_date')
+    empty_value_display = '-пусто-'
+      
+      
+
 admin.site.register(Title, TitleAdmin)
 admin.site.register(Genre, GenreAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(TitleGenre, TitleGenreAdmin)
+admin.site.register(Review, ReviewAdmin)
+admin.site.register(Comment, CommentAdmin)

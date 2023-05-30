@@ -29,12 +29,7 @@ class Title(models.Model):
     class Meta:
         unique_together = [('name', 'year', 'category')]
 
-
-class TitleGenre(models.Model):
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-
-
+        
 class Review(models.Model):
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
@@ -66,3 +61,23 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.title}, {self.score}, {self.author}'
+
+class Comment(models.Model):
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name='comments'
+    )
+    text = models.TextField(verbose_name='Текст комментария')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='comments'
+    )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата комментария', auto_now_add=True
+    )
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return f'{self.author}, {self.pub_date}: {self.text}'
+
