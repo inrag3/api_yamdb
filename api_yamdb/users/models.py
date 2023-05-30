@@ -41,12 +41,11 @@ class User(AbstractUser):
         max_length=32,
     )
 
-    def is_user(self):
-        return self.role == USER
-
+    @property
     def is_moderator(self):
         return self.role == MODERATOR
 
+    @property
     def is_admin(self):
         return self.role == ADMIN or self.is_staff
 

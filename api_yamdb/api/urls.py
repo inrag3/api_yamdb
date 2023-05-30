@@ -3,10 +3,13 @@ from users.views import TokenReceiveViewSet, UserRegistrationViewSet
 from rest_framework.routers import DefaultRouter
 from users.views import UserViewSet
 
+app_name = 'api'
+
 router = DefaultRouter()
 router.register('users', UserViewSet)
 
 urlpatterns = [
+    path('v1/', include(router.urls)),
     path(
         'v1/auth/token/',
         TokenReceiveViewSet.as_view({'post': 'create'}),
@@ -15,5 +18,4 @@ urlpatterns = [
         'v1/auth/signup/',
         UserRegistrationViewSet.as_view({'post': 'create'}),
     ),
-    path('v1/', include(router.urls)),
 ]
