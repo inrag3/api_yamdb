@@ -2,7 +2,10 @@ from rest_framework import viewsets, mixins, filters, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from reviews.models import Title, Genre, Category, Review, Title
-
+from users.permissions import (
+    IsAdminOrModeratorOrOwnerOrReadOnly,
+    IsAdminOrReadOnly,
+)
 from .serializers import (
     TitleSerializer,
     TitleSlugSerializer,
@@ -20,6 +23,7 @@ class TitleViewSet(TitleCreateMixin,
                    mixins.DestroyModelMixin,
                    viewsets.GenericViewSet):
     queryset = Title.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('genre__slug', 'category__slug', 'name', 'year')
 
@@ -31,6 +35,7 @@ class TitleViewSet(TitleCreateMixin,
 
 class GenreViewSet(CreateListRetrieveViewSet):
     queryset = Genre.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
@@ -39,6 +44,7 @@ class GenreViewSet(CreateListRetrieveViewSet):
 
 class CategoryViewSet(CreateListRetrieveViewSet):
     queryset = Category.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
@@ -47,7 +53,7 @@ class CategoryViewSet(CreateListRetrieveViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAdminOrModeratorOrOwnerOrReadOnly,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -60,7 +66,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAdminOrModeratorOrOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
         review = get_object_or_404(
