@@ -8,7 +8,7 @@ from .serializers import (GenreSerializer,
 
 class CreateListRetrieveViewSet(mixins.CreateModelMixin,
                                 mixins.ListModelMixin,
-                                mixins.RetrieveModelMixin,
+                                mixins.DestroyModelMixin,
                                 viewsets.GenericViewSet):
     pass
 
