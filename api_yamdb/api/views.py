@@ -1,4 +1,4 @@
-from rest_framework import viewsets, mixins, filters, permissions
+from rest_framework import viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from reviews.models import Title, Genre, Category, Review, Title
@@ -25,7 +25,17 @@ class TitleViewSet(TitleCreateMixin,
     queryset = Title.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('genre__slug', 'category__slug', 'name', 'year')
+    filterset_fields = ('name', 'year')
+
+    def get_queryset(self):
+        queryset = Title.objects.all()
+        genre_slug = self.request.query_params.get('genre')
+        category__slug = self.request.query_params.get('category')
+        if genre_slug is not None:
+            queryset = queryset.filter(genre__slug=genre_slug)
+        if category__slug is not None:
+            queryset = queryset.filter(category__slug=category__slug)
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ['partial_update', 'create']:
