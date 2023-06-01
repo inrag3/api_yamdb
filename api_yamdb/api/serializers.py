@@ -18,6 +18,7 @@ from rest_framework.serializers import (
     ValidationError,
 )
 
+
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -31,7 +32,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = 'name', 'slug'
 
-        
+
 class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     genre = GenreSerializer(many=True, )
@@ -66,6 +67,7 @@ class TitleSlugSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
 
+
 class ReviewSerializer(ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
 
@@ -84,6 +86,7 @@ class ReviewSerializer(ModelSerializer):
                 'два отзыва на одно произведение'
             )
         return data
+
 
 class CommentSerializer(ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
