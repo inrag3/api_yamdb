@@ -1,4 +1,5 @@
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, filters
+from rest_framework.exceptions import MethodNotAllowed
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from reviews.models import Title, Genre, Category, Review, Title
@@ -8,24 +9,20 @@ from users.permissions import (
 )
 from .serializers import (
     TitleSerializer,
-    TitleSlugSerializer,
     GenreSerializer,
     CategorySerializer,
     CommentSerializer,
     ReviewSerializer,
 )
-from .mixins import CreateListRetrieveViewSet, TitleCreateMixin
 
 
-class TitleViewSet(TitleCreateMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.ListModelMixin,
-                   mixins.DestroyModelMixin,
-                   viewsets.GenericViewSet):
+class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
+    serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'year')
+    http_method_names = ('get', 'post', 'patch', 'delete', )
 
     def get_queryset(self):
         queryset = Title.objects.all()
@@ -37,28 +34,31 @@ class TitleViewSet(TitleCreateMixin,
             queryset = queryset.filter(category__slug=category__slug)
         return queryset
 
-    def get_serializer_class(self):
-        if self.action in ['partial_update', 'create']:
-            return TitleSlugSerializer
-        return TitleSerializer
 
-
-class GenreViewSet(CreateListRetrieveViewSet):
+class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     lookup_field = 'slug'
+    http_method_names = ('get', 'post', 'delete', )
+
+    def retrieve(self, request, *args, **kwargs):
+        raise MethodNotAllowed('GET')
 
 
-class CategoryViewSet(CreateListRetrieveViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     lookup_field = 'slug'
+    http_method_names = ('get', 'post', 'delete', )
+
+    def retrieve(self, request, *args, **kwargs):
+        raise MethodNotAllowed('GET')
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
