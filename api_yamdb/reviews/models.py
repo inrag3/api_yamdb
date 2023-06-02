@@ -28,7 +28,9 @@ class Title(models.Model):
                                    verbose_name='Жанры')
     name = models.CharField(max_length=256, verbose_name='Название')
     year = models.IntegerField(verbose_name='Год создания')
-    description = models.TextField(null=True, blank=True, verbose_name='Описание')
+    description = models.TextField(null=True,
+                                   blank=True,
+                                   verbose_name='Описание')
 
     class Meta:
         unique_together = [('name', 'year', 'category')]
