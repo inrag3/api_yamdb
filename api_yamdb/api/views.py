@@ -49,30 +49,28 @@ class TitleViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(mixins.CreateModelMixin,
+                   mixins.DestroyModelMixin,
+                   mixins.ListModelMixin,
+                   viewsets.GenericViewSet):
     queryset = Genre.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     lookup_field = 'slug'
-    http_method_names = ('get', 'post', 'delete', )
-
-    def retrieve(self, request, *args, **kwargs):
-        raise MethodNotAllowed('GET')
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(mixins.CreateModelMixin,
+                      mixins.DestroyModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
     queryset = Category.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     lookup_field = 'slug'
-    http_method_names = ('get', 'post', 'delete', )
-
-    def retrieve(self, request, *args, **kwargs):
-        raise MethodNotAllowed('GET')
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
