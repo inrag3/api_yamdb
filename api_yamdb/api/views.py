@@ -1,4 +1,3 @@
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import viewsets, mixins, filters, permissions, status
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
@@ -26,6 +25,7 @@ from .serializers import (
     UserSerializer,
     TokenReceiveSerializer,
 )
+from .mixins import CreateDestroyListViewSet
 
 User = get_user_model()
 
@@ -49,10 +49,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class GenreViewSet(mixins.CreateModelMixin,
-                   mixins.DestroyModelMixin,
-                   mixins.ListModelMixin,
-                   viewsets.GenericViewSet):
+class GenreViewSet(CreateDestroyListViewSet):
     queryset = Genre.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = GenreSerializer
@@ -61,10 +58,7 @@ class GenreViewSet(mixins.CreateModelMixin,
     lookup_field = 'slug'
 
 
-class CategoryViewSet(mixins.CreateModelMixin,
-                      mixins.DestroyModelMixin,
-                      mixins.ListModelMixin,
-                      viewsets.GenericViewSet):
+class CategoryViewSet(CreateDestroyListViewSet):
     queryset = Category.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = CategorySerializer
