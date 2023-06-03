@@ -33,29 +33,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = 'name', 'slug'
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleWriteSerializer(serializers.ModelSerializer):
     category = SlugRelatedField(slug_field='slug',
                                 queryset=Category.objects.all())
     genre = SlugRelatedField(slug_field='slug', many=True,
                              queryset=Genre.objects.all())
-    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
         fields = '__all__'
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        category_object = Category.objects.get(slug=representation['category'])
-        full_category = CategorySerializer(category_object).data
-        representation['category'] = full_category
-        genre_list = []
-        for slug in representation['genre']:
-            genre_object = Genre.objects.get(slug=slug)
-            full_genre = GenreSerializer(genre_object).data
-            genre_list.append(full_genre)
-        representation['genre'] = genre_list
-        return representation
 
     def validate_year(self, year):
         present_year = datetime.now().year
@@ -65,6 +51,16 @@ class TitleSerializer(serializers.ModelSerializer):
         if year < 1895:
             raise serializers.ValidationError('Кино еще не появилось!')
         return year
+
+
+class TitleReadSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    genre = GenreSerializer(many=True)
+    rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Title
+        fields = '__all__'
 
     def get_rating(self, obj):
         rating = obj.reviews.aggregate(score=Avg('score'))

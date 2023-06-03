@@ -17,7 +17,8 @@ from .permissions import (
     IsAdminOrReadOnly,
 )
 from .serializers import (
-    TitleSerializer,
+    TitleWriteSerializer,
+    TitleReadSerializer,
     GenreSerializer,
     CategorySerializer,
     CommentSerializer,
@@ -32,11 +33,16 @@ User = get_user_model()
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'year')
     http_method_names = ('get', 'post', 'patch', 'delete', )
+
+    def get_serializer_class(self):
+        print(self.action)
+        if self.action in ('create', 'update', 'partial_update'):
+            return TitleWriteSerializer
+        return TitleReadSerializer
 
     def get_queryset(self):
         queryset = Title.objects.all()
