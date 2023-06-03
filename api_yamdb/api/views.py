@@ -1,4 +1,3 @@
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import viewsets, mixins, filters, permissions, status
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
@@ -27,6 +26,7 @@ from .serializers import (
     UserSerializer,
     TokenReceiveSerializer,
 )
+from .mixins import CreateDestroyListViewSet
 
 User = get_user_model()
 
@@ -39,7 +39,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     http_method_names = ('get', 'post', 'patch', 'delete', )
 
     def get_serializer_class(self):
-        print(self.action)
         if self.action in ('create', 'update', 'partial_update'):
             return TitleWriteSerializer
         return TitleReadSerializer
@@ -55,30 +54,22 @@ class TitleViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(CreateDestroyListViewSet):
     queryset = Genre.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     lookup_field = 'slug'
-    http_method_names = ('get', 'post', 'delete', )
-
-    def retrieve(self, request, *args, **kwargs):
-        raise MethodNotAllowed('GET')
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CreateDestroyListViewSet):
     queryset = Category.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     lookup_field = 'slug'
-    http_method_names = ('get', 'post', 'delete', )
-
-    def retrieve(self, request, *args, **kwargs):
-        raise MethodNotAllowed('GET')
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
